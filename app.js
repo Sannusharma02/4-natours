@@ -4,7 +4,15 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`));
+app.use((req, res, next) => {
+  console.log(req.url);
+  console.log('hello world!');
+  next();
+})
+
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+);
 
 const getAllTours = (req, res) => {
   res.status(200).json({
