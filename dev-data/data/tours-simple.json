@@ -242,5 +242,12 @@
     "duration": "5",
     "difficulty": "easy",
     "price": 1
+  },
+  {
+    "id": 15,
+    "name": "Test Tour 2",
+    "duration": "5",
+    "difficulty": "easy",
+    "price": 1
   }
 ]
