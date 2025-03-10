@@ -20,14 +20,14 @@ mongoose
   console.log('DB Connection Successfully Connected!');});
 
 //  Read JSON File
-console.log(__dirname)
-const tours = fs.readFileSync(`${__dirname}\tour-simple.json`)
-
-console.log(tours)
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8')
+);
 //Import Data Into Db
 const importData = async() => {
   try{
     await Tour.create(tours);
+    process.exit();
     console.log('Tours created successfully');
   } catch (err) {
     console.error(err);
@@ -38,10 +38,17 @@ const importData = async() => {
 const deleteTour = async() => {
   try{
     await Tour.deleteMany();
-    console.log('Tours created successfully');
+    console.log('Tours deleted successfully');
+    process.exit();
   } catch (err) {
     console.error(err);
   }
+}
+
+if (process.argv[2]=== '--import') {
+  importData()
+}else if(process.argv[2]=== '--delete') {
+  deleteTour()
 }
 
 console.log(process.argv);
