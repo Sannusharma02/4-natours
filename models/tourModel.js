@@ -84,8 +84,15 @@ tourScheme.pre('save', function(next){
 // })
 
 //Query middleware
-tourScheme.pre('find', function(next){
-  console.log(this);
+tourScheme.pre(/^find/, function(next){
+  this.find({ secretTour: { $ne: true } })
+  this.start= Date.now();
+  next();
+})
+
+tourScheme.post(/^find/, function(doc,next){
+   this.end = Date.now();
+  console.log(this.start-this.end);
   next();
 })
 
