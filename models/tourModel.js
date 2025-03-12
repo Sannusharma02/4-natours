@@ -6,11 +6,11 @@ const tourScheme = new mongoose.Schema({
     required: [true, 'A tour must have a name'],
     unique: true
   },
-  duration:{
+  duration: {
     type: Number,
     required: [true, 'A tour must have a duration'],
   },
-  maxGroupSize:{
+  maxGroupSize: {
     type: Number,
     required: [true, 'A tour must have a max group size'],
   },
@@ -31,7 +31,7 @@ const tourScheme = new mongoose.Schema({
     required: [true, 'A tour must have a price'],
   },
   discount: Number,
-  summary:{
+  summary: {
     type: String,
     trim: true,
     required: [true, 'A tour must have a description'],
@@ -40,18 +40,32 @@ const tourScheme = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  imageCover:{
+  imageCover: {
     type: String,
     required: [true, 'A tour must have a cover image'],
   },
-  images:[String],
+  images: [String],
   createdAt: {
     type: Date,
     default: Date.now(),
     select: false
   },
-  stareDates: [Date]
+  startDates: [Date]
+  },
+  {
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true},
+
 });
+
+tourScheme.virtual('durationWeeks').get(function(){
+  return this.duration/7;
+})
+
+//Document middleware runs before .save() and .create() .insertMany
+tourScheme.pre('save', function(){
+  console.log(this)
+})
 
 const Tour = mongoose.model('Tour', tourScheme);
 
