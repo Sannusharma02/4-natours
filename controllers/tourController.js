@@ -1,6 +1,8 @@
 const Tour = require('./../models/tourModel');
 const { query, json } = require('express');
 const APIFeatures =require('./../utils/apiFeatures');
+const res = require('express/lib/response');
+const catchAsync = require('./../utils/catchAsync');
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = 5;
   req.query.sort = '-ratingsAverage,price'
@@ -27,11 +29,6 @@ exports.getAllTours = async (req, res) => {
         tours,
       }
     });
-  } catch (err){
-    res.status(400).json({
-      status: 'fail',
-      message: err
-    })
   }
 }
 
@@ -52,22 +49,16 @@ exports.getTour = async (req, res) => {
   }
 }
 
-exports.createTour = async (req, res) => {
-  try{
-    const newTour = await Tour.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      data: {
-        tours: newTour,
-      },
-    });
-  } catch (err){
-    res.status(400).json({
-      status: 'fail',
-      message: err
-    })
-  }
-}
+exports.createTour = catchAsync(async (req, res, next) => {
+  const newTour = await Tour.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      tours: newTour,
+    }
+  });
+});
 
 exports.updateTour = async (req, res) => {
   try{
