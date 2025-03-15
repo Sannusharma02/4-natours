@@ -10,7 +10,7 @@ const tourScheme = new mongoose.Schema({
     trim: true,
     maxlength: [40, 'A tour must have less or equal then 40 characters'],
     minlength: [10, 'A tour must have more or equal then 10 characters'],
-    validate: validator.isAlpha()
+    validate: [validator.isAlpha]
   },
   slug:String,
   duration: {
@@ -32,8 +32,8 @@ const tourScheme = new mongoose.Schema({
   ratingsAverage: {
     type: Number,
     default: 4.5,
-    min: [1, 'Rating must b above 1.0'],
-    max: [5, 'Rating must b below 5.0']
+    min: [1.0, 'Rating must b above 1.0'],
+    max: [5.0, 'Rating must b below 5.0']
   },
   ratingsQuantity: {
     type: Number,
@@ -44,13 +44,12 @@ const tourScheme = new mongoose.Schema({
     required: [true, 'A tour must have a price'],
   },
   priceDiscount: {
-    type: Number,
-    validate: {
-      validator: function(val) {
-        // this only points to the current doc on new document creation
-        return val < this.price; // 100
+    type : Number,
+    validate : { validator: function (val) {
+      //this only points to the current doc on new document creation
+        return val < this.price
       },
-      message: 'Discount price ({VALUE}) should be below regular price',
+        message:'Discount price ({VALUE}) should be greater than regular price'
     }
   },
   summary: {
@@ -93,6 +92,16 @@ tourScheme.pre('save', function(next){
   this.slug = slugify(this.name, { lower: true });
   next();
 })
+
+// tourScheme.pre('save', function(next){
+//   console.log('will save');
+//   next();
+// })
+//
+// tourScheme.post('save', function(doc, next){
+//   console.log(doc)
+//   next();
+// })
 
 //Query middleware
 tourScheme.pre(/^find/, function(next){
