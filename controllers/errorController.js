@@ -52,16 +52,15 @@ module.exports = (err, req, res, next) => {
 
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-  // console.log(process.env.NODE_ENV);
-  // console.log(err.code);
+
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     // err instanceof mongoose.Error.CastError for mongoose 8
+
     if (err instanceof mongoose.Error.CastError) err = handleCastErrorDB(err);
 
     if (err.code === 11000) err = handleDuplicateFieldsDB(err);
-    console.log(err.name);
     if (err.name === 'ValidationError')
       err = handleValidationErrorDB(err);
 
