@@ -21,7 +21,8 @@ const userScheme = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Please enter your password!'],
-    minlength: 8
+    minlength: 8,
+    select: false
   },
   passwordConfirm: {
     type: String,
@@ -32,7 +33,8 @@ const userScheme = new mongoose.Schema({
       },
       message: 'Passwords are not the same!',
     }
-  }
+  },
+  passwordChangedAt: Date
 });
 
 userScheme.pre('save', async function (next) {
@@ -43,6 +45,23 @@ userScheme.pre('save', async function (next) {
   this.passwordConfirm = undefined;
   next();
 })
+
+userScheme.methods.correctPassword = async function(candidatePassword,userPassword) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+}
+
+userScheme.methods.changesPasswordAfter = function(JWTTimestamp) {
+  console.log(JWTTimestamp);
+  if(this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() /1000, 10);
+
+    // console.log(changedTimestamp, JWTTimestamp);
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  //False means Not changed
+  return false;
+};
 
 const User = mongoose.model('User', userScheme);
 
