@@ -1,4 +1,4 @@
-
+const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
@@ -136,6 +136,9 @@ try{
 
 exports.resetPassword = catchAsync( async (req,res,next) => {
   // get user based on the token
+  const hashedToken = crypto.createHash('sha256').update(req.headers.token).digest('hex');
+
+  const user  = await User.findOne({ passwordResetToken: hashedToken });
 
   // if the token has not expired, and there is user, set the new password
 
