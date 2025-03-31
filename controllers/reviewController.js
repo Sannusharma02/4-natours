@@ -4,7 +4,6 @@ const factory = require('./../controllers/handlerFactory');
 // const Tour = require('../models/tourModel');
 // const req = require('express/lib/request');
 
-
 exports.setTourUserIds = (req, res, next) => {
   console.log(req.body);
   if (!req.body.tour) req.body.tour = req.params.tourId;
