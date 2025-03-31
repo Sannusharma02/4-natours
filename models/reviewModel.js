@@ -48,10 +48,31 @@ reviewSchema.pre(/^find/,function(next){
 //   select: 'name photo',
 // });
 
+reviewSchema.statics.calcAverageRatings = async function(tour) {
+  const stats = await this.aggregate([
+    {
+      $match: {tour: tourId}
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: {$avg: '$rating'}
+
+      }
+    }
+  ])
+  console.log(stats);
+}
+
+reviewSchema.pre('save', function(next){
+  //this point current review
+  this.constructor.calcAverageRatings(this.tour);
+  next();
+
+})
+
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = Review;
 
-//POST /tour/234fad4/reviews
-//GET /tour/234fad4/reviews
-//GET /tour/234fad4/reviews/31234fda

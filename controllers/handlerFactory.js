@@ -1,6 +1,6 @@
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('../utils/appError');
-const Tour = require('../models/tourModel');
+// const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 
 exports.deleteOne = Model =>
@@ -34,6 +34,8 @@ exports.updateOne = Model => catchAsync (async(req, res, next) => {
 })
 
 exports.createOne = Model => catchAsync(async (req, res, next) => {
+  console.log(Model);
+  console.log(req.body);
   const doc = await Model.create(req.body);
 
   res.status(201).json({
@@ -73,6 +75,7 @@ exports.getAll = Model => catchAsync (async(req, res, next) => {
     .paginate();
 
   const doc = await features.query;
+  // const doc = await features.query.explain();
 
   // Respond with success
   res.status(200).json({

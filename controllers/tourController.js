@@ -1,7 +1,5 @@
 const Tour = require('./../models/tourModel');
-// const APIFeatures =require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
-// const AppError = require('./../utils/appError');
 const factory = require('./../controllers/handlerFactory');
 const req = require('express/lib/request');
 
@@ -12,10 +10,9 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 }
 
-// TOURS
 exports.getAllTours = factory.getAll(Tour);
 exports.getTour = factory.getOne(Tour, {path: 'reviews'});
-exports.createTour = factory.createOne(req.body);
+exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour)
 exports.deleteTour = factory.deleteOne(Tour)
 
