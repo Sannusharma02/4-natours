@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -5,8 +6,6 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean');
 const hpp = require('hpp');
-
-// const compression = require('compression')
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -16,8 +15,14 @@ const reviewRouter=require('./routes/reviewRoutes');
 
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // 1. Global Middleware
 // Set security HTTP headers
+app.use(express.static(path.join(__dirname, 'public')));
+
+//Set security HTTP headers
 app.use(helmet());
 
 //Development logging
@@ -48,11 +53,6 @@ app.use(hpp({
   whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price']
 }));
 
-//Serving static files
-app.use(express.static(`${__dirname}/public`));
-
-// app.use(compression());
-
 //Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -65,6 +65,25 @@ app.use((req, res, next) => {
 })
 
 // 3.  Routes
+app.get('/', (req, res) => {
+  res.status(200).render('base',{
+    tour:'the forest hiker',
+    user: 'Jonas'
+  });
+})
+
+app.get('/overview', (req, res) => {
+  res.status(200).render('overview',{
+    title: 'All Tours',
+  })
+})
+
+app.get('/tour', (req, res) => {
+  res.status(200).render('tour',{
+    title: 'The Forest Hiker Tour',
+  })
+})
+
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
