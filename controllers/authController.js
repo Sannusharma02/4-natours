@@ -41,12 +41,6 @@ const createSendToken = catchAsync(async(user, statusCode,res)=>{
 
 exports.signup = catchAsync(async(req,res,next) => {
   const newUser = await User.create(req.body);
-  // {
-  // name: req.body.name,
-  // email: req.body.email,
-  // password: req.body.password,
-  // passwordConfirm: req.body.passwordConfirm
-  // }
 
   createSendToken(newUser, 200, res)
 });
@@ -72,11 +66,12 @@ exports.login = catchAsync( async (req,res,next) =>{
 exports.protect = catchAsync( async (req,res,next) =>{
   // 1) Getting token and check of it's there
   let token;
-  // console.log(req.headers);
-  // console.log(req.query.Authorization);
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt){
+    token = req.cookies.jwt;
   }
+
   if(!token){
     return next(new AppError('You are not logged in! Please log in to get access', 401));
   }
