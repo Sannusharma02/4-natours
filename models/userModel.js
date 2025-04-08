@@ -70,9 +70,12 @@ userScheme.pre(/^find/, function(next) {
   next();
 });
 
-userScheme.methods.correctPassword = async function(candidatePassword,userPassword) {
+userScheme.methods.correctPassword = async function(
+  candidatePassword,
+  userPassword
+) {
   return await bcrypt.compare(candidatePassword, userPassword);
-}
+};
 
 userScheme.methods.changesPasswordAfter = function(JWTTimestamp) {
   console.log(JWTTimestamp);
