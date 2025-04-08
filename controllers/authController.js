@@ -52,13 +52,15 @@ exports.login = catchAsync( async (req,res,next) =>{
   if(!email || !password){
     return next(new AppError('Please provide a valid email and password', 400));
   }
-
   // 2) Check is user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
-  if(!user || !(await user.correctPassword(password,user.password))){
+
+
+  if(!user || !(await user.correctPassword(password, user.password))){
     return next(new AppError('Please provide a valid email and password', 401));
   }
 
+  console.log(user.password);
   // 3) If everything ok, send token is correct
   createSendToken(user, 200, res)
 });

@@ -5,7 +5,9 @@
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "keywords": [],
   "author": "Sannu",
@@ -20,7 +22,9 @@
   },
   "homepage": "https://github.com/Sannusharma02/4-natours#readme",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
     "@types/validator": "^13.12.2",
+    "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "compression": "^1.8.0",
     "cookie-parser": "^1.4.7",
@@ -49,6 +53,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
+    "parcel-bundler": "^1.12.5",
     "prettier": "^3.5.3"
   },
   "engines": {
