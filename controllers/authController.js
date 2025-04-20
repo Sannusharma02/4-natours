@@ -18,7 +18,6 @@ const createSendToken = catchAsync(async (user, statusCode, res) => {
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    secret: true,
     httpOnly: true
   };
 
@@ -47,14 +46,12 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-
   // 1) Check if email and password exists && password is correct
   if (!email || !password) {
     return next(new AppError('Please provide a valid email and password', 400));
   }
   // 2) Check is user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
-
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Please provide a valid email and password', 401));
@@ -80,7 +77,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
-  console.log(token);
   
 
   if (!token) {
@@ -100,7 +96,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   // 4) Check if user change password after the jwt was issued
-  if (currentUser.changesPasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(new AppError('User recently changed password! Please log in again.', 401)
     );
   }
@@ -113,6 +109,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 //Only for rendered pages, no errors!
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  console.log(req.cookies.jwt);
   if (req.cookies.jwt) {
     try {
 // 1) verify token
@@ -128,9 +125,9 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
       }
 
       // 3) Check if user change password after the token was issued
-      if (currentUser.changesPasswordAfter(decoded.iat)) {
-        return next();
-      }
+      // if (currentUser.changedPasswordAfter(decoded.iat)) {
+      //   return next();
+      // }
 
       // There is a logged in user
       res.locals.user = currentUser;

@@ -4,7 +4,7 @@ import { login,logout } from './login';
 
 // Dom Elements
 const mapBox = document.getElementById('map');
-const loginForm =document.querySelector('.form')
+const loginForm =document.querySelector('.form--login')
 const logoutBtn =document.querySelector('.nav__el--logout')
 
 
@@ -14,7 +14,9 @@ if(mapBox){
 }
 
 if (loginForm)
-  loginForm.addEventListener('submit', e => {
+  console.log(".response");
+
+loginForm.addEventListener('submit', e => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
