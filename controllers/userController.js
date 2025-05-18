@@ -2,7 +2,45 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./../controllers/handlerFactory');
+const multer = require('multer');
 // const Tour = require('../models/tourModel');
+
+// const multerStorage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'public/img/users');
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
+//   }
+// });
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb)=>{
+    cb(null, 'public/img/users');
+  },
+  filename: (req, file, cb) =>{
+    const ext = file.mimeType.split('/')[1];
+    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+  }
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimeType.startsWith('image')) {
+    cb(null, true);
+  }else{
+    cb(new AppError('Not an image! Please upload an image file', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+  // limits: {
+  //   fileSize: 1000000
+  // }
+});
+
+exports.uploadUserPhoto = upload.single('photo')
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -13,11 +51,16 @@ const filterObj = (obj, ...allowedFields) => {
 }
 
 exports.getMe = (req, res, next) => {
+  console.log(req);
   req.params.id =req.user.id
   next()
 }
 
+
+
 exports.updateMe = catchAsync(async (req, res, next) => {
+  console.log(req.body);
+  console.log(req.file);
   // 1) Create error if user POSTs password data
   if(req.body.password || req.body.passwordConfirm){
     return next(
