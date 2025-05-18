@@ -4,16 +4,16 @@ import { showAlert } from './alert';
 
 export const login = async (email, password) => {
   try {
-    console.log("1",email, password);
+    console.log("3",email, password);
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:3000/api/v1/users/login',
+      url: `http://127.0.0.1:3000/api/v1/users/login`,
       data: {
         email,
         password
       }
     });
-
+    console.log(res);
     if (res.data.status === 'success') {
       showAlert('success', 'Logged in successfully!');
       window.setTimeout(() => {
@@ -21,7 +21,7 @@ export const login = async (email, password) => {
       }, 1500);
     }
   } catch (err) {
-    showAlert('error', err.response.data.message);
+    showAlert('error', err);
   }
 };
 
@@ -31,7 +31,7 @@ export const logout = async () => {
       method: 'GET',
       url: 'http://127.0.0.1:3000/api/v1/users/logout'
     });
-    if ((res.data.status = 'success')) location.reload(true);
+    if ((res.data.status = 'success')) location.reload();
   } catch (err) {
     showAlert('error', 'Error logging out! Try again.');
   }

@@ -17,6 +17,10 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
+const cors = require('cors');
+app.use(cors({origin: true, credentials: true}));
+
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 

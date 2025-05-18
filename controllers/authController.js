@@ -5,7 +5,6 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
-const test = require('node:test');
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -40,11 +39,11 @@ const createSendToken = catchAsync(async (user, statusCode, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
-
   createSendToken(newUser, 200, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
+  // console.log(req);
   const { email, password } = req.body;
   // 1) Check if email and password exists && password is correct
   if (!email || !password) {
@@ -61,7 +60,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.logout = catchAsync(async (req, res, next) => {
+exports.logout = catchAsync(async (req, res) => {
   res.cookie('jwt', 'loggedOut', {
     expires: new Date(Date() + 10 * 1000),
     httpOnly: true
@@ -109,7 +108,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 //Only for rendered pages, no errors!
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
-  console.log(req.cookies.jwt);
   if (req.cookies.jwt) {
     try {
 // 1) verify token
@@ -117,6 +115,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
         req.cookies.jwt,
         process.env.JWT_SECRET
       );
+      // console.log("is logged in",req.cookies.jwt);
 
       // 2) Check if user still exists
       const currentUser = await User.findById(decoded.id);
