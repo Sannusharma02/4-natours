@@ -2,18 +2,17 @@
 import axios from 'axios';
 import { showAlert } from './alert';
 
+const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'http://127.0.0.1:3000';
 export const login = async (email, password) => {
   try {
-    console.log("3",email, password);
     const res = await axios({
       method: 'POST',
-      url: `http://127.0.0.1:3000/api/v1/users/login`,
+      url: `${baseUrl}/api/v1/users/login`,
       data: {
         email,
         password
       }
     });
-    console.log(res);
     if (res.data.status === 'success') {
       showAlert('success', 'Logged in successfully!');
       window.setTimeout(() => {
@@ -29,7 +28,7 @@ export const logout = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:3000/api/v1/users/logout'
+      url: `${baseUrl}/api/v1/users/logout`
     });
     if ((res.data.status = 'success')) location.reload();
   } catch (err) {
